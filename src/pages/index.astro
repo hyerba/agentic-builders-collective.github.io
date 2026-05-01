@@ -3,6 +3,7 @@ import "../styles/global.css";
 import SiteHead from "../components/SiteHead.astro";
 import { getCollection } from "astro:content";
 import { contributionLinks } from "../lib/contribution-links";
+import { latestRecap } from "../lib/recaps";
 
 const allEvents = await getCollection("events");
 const allFaq = await getCollection("faq");
@@ -334,6 +335,12 @@ const isCurrent = (href: string) => {
         margin-top: 20px;
       }
 
+      .home-recap-notice {
+        background: var(--box-bg);
+        margin-top: 32px;
+        padding: 20px;
+      }
+
       .home-section {
         margin-top: 48px;
       }
@@ -468,6 +475,9 @@ const isCurrent = (href: string) => {
         <div class="home-hero-ctas">
           <a class="button button-primary" href={whatsappUrl} target="_blank" rel="noopener">Join the Chat</a>
           <a class="button button-secondary" href="#getting-started">Get Started ↓</a>
+        </div>
+        <div class="home-recap-notice">
+          <p>New: <a class="muted-link" href={`/events/#${latestRecap.id}`}>Listen to the AI-generated recap: {latestRecap.title.replace(/^#\d+\s*[-–—]\s*/, "")}</a></p>
         </div>
       </section>
 

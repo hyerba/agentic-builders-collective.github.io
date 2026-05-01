@@ -4,6 +4,7 @@ import QRCode from "../../components/QRCode.astro";
 import { getCollection } from "astro:content";
 import { contributionLinks } from "../../lib/contribution-links";
 import { buildEventIndex, getLinkedEvent } from "../../lib/relations";
+import { recaps } from "../../lib/recaps";
 
 const allEvents = await getCollection("events");
 const allPresentations = await getCollection("presentations");
@@ -238,6 +239,49 @@ const pastLearning = past.filter((event) => event.data.kind === "learning");
       display: none;
     }
 
+    .recap-section {
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--box-bg, rgba(30, 30, 40, 0.45));
+      display: grid;
+      gap: 12px;
+    }
+
+    .recap-player {
+      width: 100%;
+    }
+
+    .recap-listen-toggle {
+      gap: 6px;
+    }
+
+    .events-section {
+      display: block;
+    }
+
+    .collapsible-heading {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      list-style: none;
+      width: 100%;
+    }
+
+    .collapsible-heading::-webkit-details-marker {
+      display: none;
+    }
+
+    .collapsible-heading::after {
+      color: #555;
+      content: "[+]";
+      margin-left: auto;
+    }
+
+    .events-section[open] > .collapsible-heading::after {
+      content: "[-]";
+    }
+
     .event-related-links {
       color: var(--muted);
       display: flex;
@@ -435,8 +479,8 @@ const pastLearning = past.filter((event) => event.data.kind === "learning");
     )}
   </section>
 
-  <section>
-    <h3 class="section-label">Meetups</h3>
+  <details class="events-section">
+    <summary class="section-label collapsible-heading">Past Meetups</summary>
     {pastMeetups.length === 0 ? (
       <p>No past events yet. <a class="muted-link" href={contributionLinks.event} target="_blank" rel="noopener">Add an event by submitting a pull request</a></p>
     ) : (
@@ -524,10 +568,63 @@ const pastLearning = past.filter((event) => event.data.kind === "learning");
         ))}
       </div>
     )}
-  </section>
+  </details>
 
-  <section>
-    <h3 class="section-label">Learning</h3>
+  <details class="events-section" open>
+    <summary class="section-label collapsible-heading">Recaps</summary>
+    <p class="collection-guide">
+      AI-generated audio summaries of the past week's WhatsApp chat highlights — handy if you missed anything.
+    </p>
+    {recaps.length === 0 ? (
+      <p>No recaps yet.</p>
+    ) : (
+      <div class="list">
+        {recaps.map((recap) => {
+          const panelId = `recap-panel-${recap.id}`;
+          return (
+            <div class="list-item" id={recap.id}>
+              <div class="list-item-header">
+                <span class="list-item-title">{recap.title}</span>
+                <div class="card-meta">
+                  <span>{new Date(recap.date).toLocaleDateString("en-SG", { year: "numeric", month: "short", day: "numeric" })}</span>
+                  <span>{recap.durationLabel}</span>
+                  <span>AI-generated</span>
+                </div>
+              </div>
+              <div class="survey-actions">
+                <button
+                  type="button"
+                  class="button button-secondary events-panel-toggle recap-listen-toggle"
+                  data-panel-toggle={panelId}
+                  data-show-label="Listen to recap"
+                  data-hide-label="Hide recap"
+                  data-show-text="Listen"
+                  data-hide-text="Hide"
+                  aria-controls={panelId}
+                  aria-expanded="false"
+                  aria-label="Listen to recap"
+                  title="Listen to recap"
+                >
+                  <span>Listen</span>
+                  <span class="inline-arrow" aria-hidden="true">▶</span>
+                </button>
+              </div>
+              <div id={panelId} class="recap-section events-panel-section is-hidden" data-panel>
+                <p>{recap.description}</p>
+                <audio class="recap-player" controls preload="metadata" src={recap.audio}>
+                  <a href={recap.audio}>Download audio (m4a)</a>
+                </audio>
+                <a class="muted-link" href={recap.audio} download>Download m4a</a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </details>
+
+  <details class="events-section" open>
+    <summary class="section-label collapsible-heading">Learning</summary>
     {pastLearning.length === 0 ? (
       <p>No learning sessions yet. <a class="muted-link" href={contributionLinks.event} target="_blank" rel="noopener">Add a learning event by submitting a pull request</a></p>
     ) : (
@@ -615,7 +712,7 @@ const pastLearning = past.filter((event) => event.data.kind === "learning");
         ))}
       </div>
     )}
-  </section>
+  </details>
 
   <script>
     const getLocalDateKey = (date: Date) => {
@@ -664,6 +761,12 @@ const pastLearning = past.filter((event) => event.data.kind === "learning");
         toggle.setAttribute("aria-expanded", String(isVisible));
         toggle.setAttribute("aria-label", nextLabel);
         toggle.setAttribute("title", nextLabel);
+        const showText = toggle.getAttribute("data-show-text");
+        const hideText = toggle.getAttribute("data-hide-text");
+        if (showText && hideText) {
+          const textSpan = toggle.querySelector("span:not([aria-hidden])");
+          if (textSpan) textSpan.textContent = isVisible ? hideText : showText;
+        }
       });
     });
   </script>
