@@ -168,3 +168,14 @@
   youtube: "https://youtube.com/@devRelRel"
   addedAt: "2026-04-27T20:41:10Z"
   featured: false
+
+- id: dr-petty-chen
+  name: Dr Petty Chen
+  aliases: []
+  tagline: "CEO"
+  company: Milkiway
+  website: https://milkiway.ai
+  linkedin: https://www.linkedin.com/in/pettychen/
+  github: ""
+  addedAt: "2026-05-02T00:00:00Z"
+  featured: false
