@@ -168,3 +168,16 @@
   youtube: "https://youtube.com/@devRelRel"
   addedAt: "2026-04-27T20:41:10Z"
   featured: false
+
+- id: bartholomew-ting
+  name: Bartholomew Ting
+  aliases:
+    - butter
+  tagline: Finding beauty in everyday materials
+  company: SP
+  website: https://for.edu.sg/spfablab
+  linkedin: https://www.linkedin.com/in/butternmilk
+  github: https://github.com/butternmilk
+  youtube: https://youtube.com/butternmilk
+  addedAt: "2026-05-03T05:17:15Z"
+  featured: false
